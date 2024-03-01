@@ -1,8 +1,8 @@
 # Dataclasses field metadata for filtering
 
-Project that demonstrates how the `metadata` attribute of [Python Dataclasses Field](https://docs.python.org/3/library/dataclasses.html) can be leveraged to provide class level attribute behaviour such as representation filtering.
+Project demonstrating how the `metadata` attribute of [Python Dataclasses Field](https://docs.python.org/3/library/dataclasses.html) can be leveraged to provide class level attribute behaviour such as representation filtering.
 
-A `TemplateAttributes` dataclass defines the field metadata.
+A [TemplateAttributes](template_attributes.py) dataclass defines the field metadata.
 
 ```python
 from typing import Any
@@ -18,7 +18,7 @@ class TemplateAttributes:
         return asdict(self)
 ```
 
-This `TemplateAttributes` dataclass is then used as the `metadata` attribute of the specific _Template_ dataclasses fields.
+This [TemplateAttributes](template_attributes.py) dataclass is then used as the `metadata` attribute of the specific [Templates](templates.py) dataclasses fields.
 
 ```python
 from dataclasses import dataclass, field
@@ -46,48 +46,29 @@ class ComputeTemplate:
     )
 ```
 
-Finally, these _Template_ dataclasses can be passed to a utility function which interprets the field metadata and filters out fields whose metadata is marked as not visible.
+Finally, these [Templates](templates.py) dataclasses can be used with [TemplateDecorator](template_decorators.py) classes to apply field metadata based filtering.
 
 ```python
-import dataclasses
-from dataclasses import dataclass
-from typing import Any
-
 from template_attributes import TemplateAttributeField
+from template_utils import TemplateUtils
 
+def api_visible_decorator(func):
 
-class TemplateUtils:
+    def wrapper(*args, **kwargs):
 
-    @staticmethod
-    def repr(
-            dataclazzes: list[dataclass],
-            repr_type: TemplateAttributeField
-        ) -> list[dict[str, Any]]:
-        
-        results = []
+        processed_dataclasses = TemplateUtils.repr(
+            dataclazzes=kwargs.get("dataclazzes"),
+            repr_type=TemplateAttributeField.API_VISIBLE
+        )
 
-        for dataclazz in dataclazzes:
+        kwargs["dataclazzes"] = processed_dataclasses
 
-            fields = dataclasses.fields(dataclazz)
+        func(*args, **kwargs)
 
-            allowed_fields = {}
-
-            for field in fields:
-
-                metadata = field.metadata
-
-                if metadata.get(repr_type.value, False) == True:
-
-                    allowed_fields[field.name] = getattr(dataclazz, field.name)
-
-            if allowed_fields:
-
-                results.append(allowed_fields)
-
-        return results
+    return wrapper
 ```
 
-A `runner.py` is provided which shows the usage and execution results of dataclasses field metadata filtering.
+A [runner](runner.py) is provided which shows the usage and execution results of dataclasses field metadata filtering.
 
 ```bash
 python3 runner.py 

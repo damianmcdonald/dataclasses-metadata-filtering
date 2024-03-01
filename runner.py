@@ -1,8 +1,9 @@
 import json
+from dataclasses import dataclass
 
-from template_attributes import TemplateAttributes, TemplateAttributeField
+from template_attributes import TemplateAttributes
 from templates import ComputeTemplate, ApplicationTemplate
-from template_utils import TemplateUtils
+from template_decorators import api_visible_decorator, ui_visible_decorator
 
 
 print("")
@@ -43,32 +44,32 @@ print("")
 print("API Visible")
 print("")
 
-print(
-    json.dumps(
-        TemplateUtils.repr(
-            dataclazzes=[
-                test_compute_template,
-                test_application_template
-            ],
-            repr_type=TemplateAttributeField.API_VISIBLE
-        ),
-        indent=4
-    )
+
+@api_visible_decorator
+def print_api(dataclazzes: list[dataclass]):
+    print(json.dumps(dataclazzes, indent=4))
+
+
+print_api(
+    dataclazzes=[
+        test_compute_template,
+        test_application_template
+    ]
 )
+
 
 print("")
 print("UI Visible")
 print("")
 
-print(
-    json.dumps(
-        TemplateUtils.repr(
-            dataclazzes=[
-                test_compute_template,
-                test_application_template
-            ],
-            repr_type=TemplateAttributeField.UI_VISIBLE
-        ),
-        indent=4
-    )
+@ui_visible_decorator
+def print_ui(dataclazzes: list[dataclass]):
+    print(json.dumps(dataclazzes, indent=4))
+
+
+print_ui(
+    dataclazzes=[
+        test_compute_template,
+        test_application_template
+    ]
 )

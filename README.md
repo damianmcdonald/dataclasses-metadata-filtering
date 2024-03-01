@@ -1,6 +1,6 @@
 # Dataclasses field metadata for filtering
 
-Demo project that demonstrates how the `metadata` attribute of [Python Dataclasses Field](https://docs.python.org/3/library/dataclasses.html) can be leveraged to provide class level attribute behaviour such as representation filtering.
+Project that demonstrates how the `metadata` attribute of [Python Dataclasses Field](https://docs.python.org/3/library/dataclasses.html) can be leveraged to provide class level attribute behaviour such as representation filtering.
 
 A `TemplateAttributes` dataclass defines the field metadata.
 
